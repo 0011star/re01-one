@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            background-color: black;
+            display: flex;
+        }
+        canvas{
+            animation: beat 0.5s linear infinite alternate;
+        }
+        span{
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top:46.5vh;
+            color:rgb(255, 88, 153);
+            font-size: 23px;
+        }
+        @keyframes beat {
+            0%{
+                transform: scale(1);
+            }
+            100%{
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+    <span>辉辉❤小伍</span>
+</body>
+<script>
+    const canvas=document.querySelector("canvas");
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    const ctx=canvas.getContext('2d');
+    class Heart{
+        constructor(x,y,r){
+            this.startX=x;
+            this.startY=y;
+            this.x=x;
+            this.y=y;
+            this.vx=1.2;
+            this.vy=1.2;
+            this.endX=x+Math.random()*r-r/2;
+            this.endY=y+Math.random()*r-r/2;
+        }
+        update(){
+            if(this.startX>this.endX){
+                this.x-=this.vx;
+                if(this.x<this.endX){
+                    this.x=this.startX;
+                }
+            }
+            if(this.startX<this.endX){
+                this.x+=this.vx;
+                if(this.x>this.endX){
+                    this.x=this.startX;
+                }
+            }
+            if(this.startY>this.endY){
+                this.y-=this.vy;
+                if(this.y<this.endY){
+                    this.y=this.startY;
+                }
+            }
+            if(this.startY<this.endY){
+                this.y+=this.vy;
+                if(this.y>this.endY){
+                    this.y=this.startY;
+                }
+            }
+        }
+        draw(){
+            ctx.beginPath();
+            ctx.fillStyle="rgb(255,88,153)";
+            ctx.arc(this.x,this.y,1.5,0,Math.PI*2);
+            ctx.fill();
+            ctx.closePath();
+            this.update();
+        }
+
+    }
+    ctx.translate(canvas.width/2,canvas.height/2);
+    let heartArr=[];
+    const radius=17;
+    const r=190;
+    for(let i=0; i<Math.PI*2;i+=Math.PI/180){
+        const x=getx(radius,i);
+        const y=gety(radius,i);
+        for(let i=0;i<8;i++){
+            heartArr.push(new Heart(x,y,r));
+        }
+    }
+    function draw(){
+        ctx.beginPath();
+        ctx.lineWidth=5;
+        ctx.lineJoin="round";
+        ctx.strokeStyle='rgb(255,88,153)';
+        heartArr.forEach(item=>{
+            ctx.lineTo(item.startX,item.startY);
+        })
+        ctx.clearRect(-canvas.width/2,-canvas.height/2,canvas.width,canvas.height);
+        ctx.stroke();
+        ctx.closePath();
+        heartArr.forEach(item=>{
+            item.draw();
+        })
+        requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ctx.translate(canvas.width/2,canvas.height/2);
+    // const radius=17;
+    // ctx.strokeStyle="pink";
+    // for(let i=0; i<Math.PI*2;i+=Math.PI/180){
+    //     ctx.lineTo(getx(radius,i),gety(radius,i));
+    // }
+    // ctx.stroke();
+
+    function getx(radius,r){
+        return radius*(12*Math.sin(r)-4*Math.sin(3*r))
+    }
+    function gety(radius,r){
+        return (-radius*(13*Math.cos(r)-5*Math.cos(2*r)-2*Math.cos(3*r)-Math.cos(4*r)))
+    }
+
+</script>
+</html>
